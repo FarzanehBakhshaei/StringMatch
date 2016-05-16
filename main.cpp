@@ -9,8 +9,15 @@
 
 bool AreEqual(std::string T, size_t start, size_t end, size_t match_start, size_t match_end, char c) {
   assert(end - start == match_end - match_start + 1);
+
+  std::string s1(T.begin() + start, T.begin() + end);
+  std::string s2(T.begin() + match_start, T.begin() + match_end);
+  s2 += c;
   
-  bool equal = true;
+  if (s1 == s2) return true;
+  return false;
+
+  /*bool equal = true;
   for (size_t i = start, j = 0; i < end-1; i++, j++) {
     if (T[i] != T[match_start + j]) {
       equal = false;
@@ -20,20 +27,16 @@ bool AreEqual(std::string T, size_t start, size_t end, size_t match_start, size_
 
   if (equal && T[end - 1] != c)
     return false;
-
-  return equal;
+  
+  return equal;*/
 }
 
 std::vector<std::map<char, int>> makeDeltaTable(std::string T, std::vector<char> alphabet) {
   std::vector<std::map<char, int>> delta(T.size()+1);
-  for (size_t i = 0; i < T.size()+1; i++) {
-    for (size_t j = 0; j < alphabet.size(); j++)
-      delta[i][alphabet[j]] = 0;
-  }
 
   delta[0][T[0]] = 1;
 
-  for (size_t j = 0; j < T.size()+1; j++) {
+  for (size_t j = 1; j < T.size()+1; j++) {
     for (auto c : alphabet) {
       size_t k = (std::min)(T.size(), j + 1);
       delta[j][c] = 0;
@@ -56,14 +59,14 @@ void matchString(std::string S, std::string T, std::vector<char> alphabet, std::
   for (size_t i = 0; i < S.size(); i++) {
     state = deltaTable[state][S[i]];
     if (state == T.size()) {
-      std::cout << std::string(S.begin(), S.begin() + i + 1) << std::endl;
+      std::cout << "start = " << i - T.size() + 2 << "\tend = " << i + 1 << "\t\t" << std::string(S.begin(), S.begin() + i + 1) << std::endl;
     }
   }
 }
 
 void main() {
-  std::string S = "abggxaxabgxb";
-  std::string T = "gxa";
+  std::string S = "abggxaxbagxbaxbag";
+  std::string T = "axbag";
   std::string alphabet_str = "gxab";
 
   std::vector<char> alphabet;
